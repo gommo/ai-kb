@@ -10,6 +10,7 @@
   "type": "module",
   "scripts": {
     "start": "node src/index.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "build": "NODE_ENV=production node src/index.js",
     "prepublishOnly": "npm run build"
   },
@@ -17,7 +18,11 @@
     "type": "git",
     "url": "git+https://github.com/gommo/ai-kb.git"
   },
-  "keywords": ["ai", "knowledge base", "code analysis"],
+  "keywords": [
+    "ai",
+    "knowledge base",
+    "code analysis"
+  ],
   "author": "Colin Goudie",
   "license": "MIT",
   "bugs": {
@@ -27,5 +32,8 @@
   "dependencies": {
     "fs-extra": "^11.2.0",
     "glob": "^11.0.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
   }
 }
