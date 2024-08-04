@@ -1,0 +1,31 @@
+{
+  "name": "ai-kb",
+  "version": "0.1.0",
+  "bin": {
+    "ai-kb": "./src/index.js"
+  },
+  "private": false,
+  "description": "",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "build": "NODE_ENV=production node src/index.js",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gommo/ai-kb.git"
+  },
+  "keywords": ["ai", "knowledge base", "code analysis"],
+  "author": "Colin Goudie",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gommo/ai-kb/issues"
+  },
+  "homepage": "https://github.com/gommo/ai-kb#readme",
+  "dependencies": {
+    "fs-extra": "^11.2.0",
+    "glob": "^11.0.0"
+  }
+}
