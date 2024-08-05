@@ -47,6 +47,10 @@ Each section defines a set of include patterns followed by optional exclude patt
 
 To run the application in debug mode and see additional logging information, use the `-v` flag when starting the application:
 
+   npx ai-kb -v
+
+This will provide detailed logging information about the file matching process, which can be helpful for troubleshooting or understanding how the tool processes your codebase.
+
 ## Output
 
 The tool generates markdown files named `ai-kb-<section-name>.md` for each section defined in your config file. These files contain the content of the matched source files, optimized for AI consumption.
