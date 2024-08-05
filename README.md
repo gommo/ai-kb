@@ -43,9 +43,9 @@ Each section defines a set of include patterns followed by optional exclude patt
 
    npx ai-kb
 
-3. To run without debug output:
-NODE_ENV=production npx ai-kb
+## Debug Mode
 
+To run the application in debug mode and see additional logging information, use the `-v` flag when starting the application:
 
 ## Output
 
