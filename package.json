@@ -1,11 +1,11 @@
 {
   "name": "ai-kb",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "bin": {
     "ai-kb": "./src/index.js"
   },
   "private": false,
-  "description": "",
+  "description": "AI-friendly Knowledge Base Generator",
   "main": "src/index.js",
   "type": "module",
   "scripts": {
