@@ -41,13 +41,17 @@ Each section defines a set of include patterns followed by optional exclude patt
 
 2. Run the tool:
 
+```
    npx ai-kb
+```
 
 ## Debug Mode
 
 To run the application in debug mode and see additional logging information, use the `-v` flag when starting the application:
 
+```
    npx ai-kb -v
+```
 
 This will provide detailed logging information about the file matching process, which can be helpful for troubleshooting or understanding how the tool processes your codebase.
 
