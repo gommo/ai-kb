@@ -25,15 +25,16 @@ This command will download and execute the latest version of AI-KB.
 
 ```
 [section-name]
-include/pattern//*.js
-include/pattern//*.ts
+src/**/*.js
+**/*.tsx
 
-exclude/pattern/*.test.js
+- src/**/some.js
 
 [another-section]
-different/include/pattern/**/*.rb
+src/**/*.js
+**/*.tsx
 
-exclude/pattern/*.spec.rb
+- src/**/some.js
 ```
 
 Each section defines a set of include patterns followed by optional exclude patterns (prefixed with `-`).
