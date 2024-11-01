@@ -48,8 +48,25 @@ Each section can contain:
 2. Run the tool:
 
 ```
-   npx ai-kb
+   npx ai-kb@latest
 ```
+
+## Pattern Priority
+Patterns are processed in the following order:
+
+Explicit includes (+ prefix) override global ignores for specific paths
+Normal includes match files while respecting global ignores
+Excludes (- prefix) remove files from the final set
+
+For example, to include a specific package from node_modules while keeping the general node_modules ignore:
+
+
+```
+[section]
++node_modules/important-package/**/*.js  # This package will be included
+**/*.js                                 # Other .js files (excluding node_modules)
+```
+
 
 ## Debug Mode
 
