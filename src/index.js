@@ -132,51 +132,55 @@ function readConfig() {
 // Function to get matching files for a section
 async function getMatchingFiles(patterns, excludePatterns) {
   let files = [];
-
   console.log('Include patterns:', patterns);
   console.log('Exclude patterns:', excludePatterns);
-
+  
   for (const pattern of patterns) {
     debugLog(`Processing pattern: ${pattern}`);
-
+    
     // Check if the pattern explicitly includes a globally ignored path
-    const explicitInclude = GLOBAL_IGNORES.some(ignore =>
-      pattern.includes(ignore.replace('/**', '').replace('**/', '')));
-
-    let globPattern = pattern;
-    if (!explicitInclude) {
-      const ignorePatterns = GLOBAL_IGNORES.map(p => `!${p}`);
-      globPattern = [pattern, ...ignorePatterns];
-    }
-
-    debugLog(`Glob pattern:`, globPattern);
-
+    const explicitIncludes = GLOBAL_IGNORES.filter(ignore => 
+      pattern.startsWith('+') && pattern.slice(1).includes(ignore.replace('/**', '').replace('**/', ''))
+    );
+    
+    let globPattern = pattern.startsWith('+') ? pattern.slice(1) : pattern;
+    
     try {
-      const matchedFiles = await glob(globPattern);
+      // Create a combined options object for glob
+      const globOptions = {
+        ignore: pattern.startsWith('+') ? [] : GLOBAL_IGNORES,
+        nodir: true  // Don't match directories themselves
+      };
+      
+      debugLog(`Glob pattern: ${globPattern}`);
+      debugLog(`Ignore patterns: ${JSON.stringify(globOptions.ignore)}`);
+      
+      const matchedFiles = await glob(globPattern, globOptions);
       debugLog(`Matched files for ${pattern}:`, matchedFiles);
       files = files.concat(matchedFiles);
     } catch (error) {
       console.error(`Error processing pattern ${pattern}:`, error);
     }
   }
-
-  debugLog('Files before exclusion:', files);
-
-  for (const pattern of excludePatterns) {
-    debugLog(`Processing exclude pattern: ${pattern}`);
-    try {
-      const excludeFiles = await glob(pattern);
-      debugLog(`Files to exclude:`, excludeFiles);
-      files = files.filter(file => !excludeFiles.includes(file));
-    } catch (error) {
-      console.error(`Error processing exclude pattern ${pattern}:`, error);
+  
+  // Process explicit exclude patterns
+  if (excludePatterns.length > 0) {
+    debugLog('Files before exclusion:', files);
+    for (const pattern of excludePatterns) {
+      debugLog(`Processing exclude pattern: ${pattern}`);
+      try {
+        const excludeFiles = await glob(pattern, { nodir: true });
+        debugLog(`Files to exclude:`, excludeFiles);
+        files = files.filter(file => !excludeFiles.includes(file));
+      } catch (error) {
+        console.error(`Error processing exclude pattern ${pattern}:`, error);
+      }
     }
   }
-
+  
   debugLog('Final file list:', files);
   return files;
 }
-
 
 // Function to remove unnecessary whitespace
 function removeWhitespace(content, isWhitespaceSensitive) {

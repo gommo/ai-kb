@@ -6,6 +6,7 @@ AI-KB is a command-line tool that generates AI-friendly knowledge bases from you
 
 - Configurable file inclusion and exclusion patterns
 - Global ignore patterns for common non-code directories and files
+- Explicit include patterns to override global ignores
 - Whitespace optimization to reduce file size while preserving context
 - Special handling for whitespace-sensitive languages (e.g., Python)
 - Environment-based debug logging
@@ -14,7 +15,7 @@ AI-KB is a command-line tool that generates AI-friendly knowledge bases from you
 
 You don't need to install AI-KB permanently. You can run it directly using npx:
 
-    npx ai-kb
+    npx ai-kb@latest
 
 
 This command will download and execute the latest version of AI-KB.
@@ -27,6 +28,7 @@ This command will download and execute the latest version of AI-KB.
 [section-name]
 src/**/*.js
 **/*.tsx
++node_modules/specific-package/**/*.js  # Explicitly include specific ignored paths
 
 - src/**/some.js
 
@@ -37,7 +39,11 @@ src/**/*.js
 - src/**/some.js
 ```
 
-Each section defines a set of include patterns followed by optional exclude patterns (prefixed with `-`).
+Each section can contain:
+
+- Include patterns (normal glob patterns)
+- Explicit include patterns (prefixed with +) to override global ignores
+- Exclude patterns (prefixed with -)
 
 2. Run the tool:
 
