@@ -82,6 +82,38 @@ This will provide detailed logging information about the file matching process, 
 
 The tool generates markdown files named `ai-kb-<section-name>.md` for each section defined in your config file. These files contain the content of the matched source files, optimized for AI consumption.
 
+## Command Line Options
+
+The tool supports the following command line options:
+
+- `-v`: Enable verbose debug logging
+- `--tree`: Generate a directory tree structure at the beginning of each output file
+
+When using the `--tree` option, the generated markdown will include a visual representation of your project's directory structure before the file contents. This can be helpful for:
+
+- Understanding the overall project organization
+- Documenting the project structure
+- Making it easier to navigate through the codebase
+
+Example tree output:
+```
+# Directory Structure
+
+├── src/
+│   ├── components/
+│   │   ├── Button.js
+│   │   └── Input.js
+│   ├── utils/
+│   │   └── helpers.js
+│   └── index.js
+├── tests/
+│   └── unit/
+│       └── helpers.test.js
+└── package.json
+```
+
+The tree structure respects the same ignore patterns defined in your `.ai-kb-config` file and the global ignore patterns.
+
 ## Customization
 
 The tool uses sensible defaults, but you can customize its behavior:

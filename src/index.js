@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { debug } from 'console';
 import fs from 'fs-extra';
 import { glob } from 'glob';
 import path from 'path';
@@ -104,6 +105,48 @@ const GLOBAL_IGNORES = [
   // Our output files
   'ai-kb-*.md'
 ];
+
+
+// Function to generate a tree structure of files and directories
+async function generateTree(rootDir, excludePatterns = []) {
+  let treeContent = `# Directory Structure\n\n`;
+  
+  async function buildTree(dir, prefix = '') {
+    const items = await fs.readdir(dir);
+    const sortedItems = items.sort((a, b) => {
+      // Sort directories first, then files
+      const aIsDir = fs.statSync(path.join(dir, a)).isDirectory();
+      const bIsDir = fs.statSync(path.join(dir, b)).isDirectory();
+      if (aIsDir === bIsDir) return a.localeCompare(b);
+      return bIsDir ? 1 : -1;
+    });
+
+    for (let i = 0; i < sortedItems.length; i++) {
+      const item = sortedItems[i];
+      const itemPath = path.join(dir, item);
+      const relativePath = path.relative(rootDir, itemPath);
+
+      // Skip if item matches exclude patterns or global ignores
+      const shouldExclude = [...GLOBAL_IGNORES, ...excludePatterns].some(pattern => {
+        return itemPath.includes(pattern.replace('/**', '').replace('**/', ''));
+      });
+      if (shouldExclude) continue;
+
+      const isLast = i === sortedItems.length - 1;
+      const stats = await fs.stat(itemPath);
+      
+      if (stats.isDirectory()) {
+        treeContent += `${prefix}${isLast ? '└── ' : '├── '}${item}/\n`;
+        await buildTree(itemPath, `${prefix}${isLast ? '    ' : '│   '}`);
+      } else {
+        treeContent += `${prefix}${isLast ? '└── ' : '├── '}${item}\n`;
+      }
+    }
+  }
+
+  await buildTree(rootDir);
+  return treeContent;
+}
 
 // Function to read and parse the config file
 function readConfig() {
@@ -216,21 +259,42 @@ async function generateMarkdown(files) {
   return markdowns.join('\n\n');
 }
 
-// Main function
 async function main() {
+  const shouldGenerateTree = process.argv.includes('--tree');
+  console.log('Should generate tree:', shouldGenerateTree);
+  
+  if (shouldGenerateTree) {
+    try {
+      const rootDir = process.cwd();
+      const treeStructure = await generateTree(rootDir, []);
+      
+      // Write tree to file instead of console
+      const treeFile = 'ai-kb-tree.txt';
+      await fs.writeFile(treeFile, treeStructure);
+      console.log(`Generated tree structure in ${treeFile}`);
+      return;
+    } catch (error) {
+      console.error('Error generating tree structure:', error);
+      process.exit(1);
+    }
+  }
+
+  // Regular markdown generation (only runs if --tree is not present)
   const config = readConfig();
   debugLog('Parsed config:', config);
-
+  
   for (const [section, patterns] of Object.entries(config)) {
     console.log(`Processing section: ${section}`);
     const includePatterns = patterns.filter(p => !p.startsWith('-'));
     const excludePatterns = patterns.filter(p => p.startsWith('-')).map(p => p.slice(1));
-
+    
     const files = await getMatchingFiles(includePatterns, excludePatterns);
     console.log(`Matching files for ${section}:`, files);
-
+    
     if (files.length > 0) {
+      // Generate regular markdown content
       const markdown = await generateMarkdown(files);
+      
       const outputFile = `ai-kb-${section}.md`;
       await fs.writeFile(outputFile, markdown);
       console.log(`Generated ${outputFile}`);
